@@ -5,6 +5,7 @@ At the moment I'm just doing this in a flat file with pickle.
 """
 
 import pickle
+import API.api as api
 
 INIT_DATA = {
     "record_instances": [],
@@ -21,7 +22,6 @@ class DataController:
     def _initialise(self, filename: str) -> "DataController":
         self._filename = filename
         self._data = self._loadData()
-        self._data_updated = False
         return self
 
     @classmethod
@@ -48,7 +48,7 @@ class DataController:
     def addRecordInstance(self, record_instance: dict) -> None:
         self._data["record_instances"].append(record_instance)
         self._saveData()
-        self._data_updated = True
+        api.broadcast_data_update()
 
     @property
     def filename(self) -> str:
@@ -57,10 +57,3 @@ class DataController:
     @property
     def data(self) -> dict:
         return self._data
-    
-    @property
-    def data_updated(self) -> bool:
-        return self._data_updated
-    
-    def reset_data_updated(self) -> None:
-        self._data_updated = False

@@ -11,7 +11,7 @@ if __name__ == "__main__":
     debug = True
 
     # Start the API in a separate thread
-    threading.Thread(target=lambda: api.app.run(debug=debug, use_reloader=False, port=5001)).start()
+    threading.Thread(target=lambda: api.run(debug)).start()
 
     # Start serial monitor in a separate thread
     serial_port = sys.argv[1]
