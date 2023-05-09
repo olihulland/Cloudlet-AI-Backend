@@ -1,8 +1,10 @@
 from flask import Flask, Response
+from flask_cors import CORS
 from Data.data_controller import DataController
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 DATA_CONTROLLER = DataController.getInstance()
 
