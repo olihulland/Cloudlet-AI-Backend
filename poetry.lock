@@ -79,6 +79,34 @@ Flask = ">=0.9"
 Six = "*"
 
 [[package]]
+name = "flask-sock"
+version = "0.6.0"
+description = "WebSocket support for Flask"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "flask-sock-0.6.0.tar.gz", hash = "sha256:435cf81bb497ac7622cd1dda554fbfa3e369e629daea0a1d21b73a24f1bd6229"},
+    {file = "flask_sock-0.6.0-py3-none-any.whl", hash = "sha256:593fffb186928080a5b5b03d717efc56dac2d5ed690ce6bfff333b3597a2f518"},
+]
+
+[package.dependencies]
+flask = ">=2"
+simple-websocket = ">=0.5.1"
+
+[[package]]
+name = "h11"
+version = "0.14.0"
+description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "h11-0.14.0-py3-none-any.whl", hash = "sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761"},
+    {file = "h11-0.14.0.tar.gz", hash = "sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d"},
+]
+
+[[package]]
 name = "itsdangerous"
 version = "2.1.2"
 description = "Safely pass data to untrusted environments and back."
@@ -184,6 +212,21 @@ files = [
 cp2110 = ["hidapi"]
 
 [[package]]
+name = "simple-websocket"
+version = "0.10.0"
+description = "Simple WebSocket server and client for Python"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "simple-websocket-0.10.0.tar.gz", hash = "sha256:82c0b0b1006d5490f09ff66392394d90dd758285635edad241e093e9a8abd3eb"},
+    {file = "simple_websocket-0.10.0-py3-none-any.whl", hash = "sha256:fc1bc56c393a187e7268f8ab99da1a8e8da9b5dfb7769a2f3b8dada00067745b"},
+]
+
+[package.dependencies]
+wsproto = "*"
+
+[[package]]
 name = "six"
 version = "1.16.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -213,7 +256,22 @@ MarkupSafe = ">=2.1.1"
 [package.extras]
 watchdog = ["watchdog (>=2.3)"]
 
+[[package]]
+name = "wsproto"
+version = "1.2.0"
+description = "WebSockets state-machine based protocol implementation"
+category = "main"
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "wsproto-1.2.0-py3-none-any.whl", hash = "sha256:b9acddd652b585d75b20477888c56642fdade28bdfd3579aa24a4d2c037dd736"},
+    {file = "wsproto-1.2.0.tar.gz", hash = "sha256:ad565f26ecb92588a3e43bc3d96164de84cd9902482b130d0ddbaa9664a85065"},
+]
+
+[package.dependencies]
+h11 = ">=0.9.0,<1"
+
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "f74a33cb69b6a8def1b01e1c1d6b96ed981e6f036c0bb6a6848f5043de9ded16"
+content-hash = "d5994c75985981594787ea843ff940ed0d04086c907b918a665833bfb84e27de"

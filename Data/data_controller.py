@@ -21,6 +21,7 @@ class DataController:
     def _initialise(self, filename: str) -> "DataController":
         self._filename = filename
         self._data = self._loadData()
+        self._data_updated = False
         return self
 
     @classmethod
@@ -47,6 +48,7 @@ class DataController:
     def addRecordInstance(self, record_instance: dict) -> None:
         self._data["record_instances"].append(record_instance)
         self._saveData()
+        self._data_updated = True
 
     @property
     def filename(self) -> str:
@@ -55,3 +57,10 @@ class DataController:
     @property
     def data(self) -> dict:
         return self._data
+    
+    @property
+    def data_updated(self) -> bool:
+        return self._data_updated
+    
+    def reset_data_updated(self) -> None:
+        self._data_updated = False
