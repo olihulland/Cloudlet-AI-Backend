@@ -3,7 +3,9 @@ from threading import Thread
 import string
 import uuid
 from serial_data import SerialData
+from Data.data_controller import DataController
 
+DATA_CONTROLLER = DataController.getInstance()
 class SerialMonitor(Thread):
     def __init__(self, port: str):
         Thread.__init__(self)
@@ -68,6 +70,7 @@ class SerialMonitor(Thread):
                     hsID = line[:2]
                     seqNum = line[2:commaIndex]
                     message = line[commaIndex+1:].strip()
+                    classification = 0
 
                     # check if message include termination character
                     complete = False
@@ -83,6 +86,7 @@ class SerialMonitor(Thread):
 
                     # if the message is complete, send it to the API
                     if complete:
-                        data = SerialData(self.idMap[uniqueID]["message"])
-                        print("API SEND: " + str(data))
+                        data = SerialData(self.idMap[uniqueID]["message"], classification, self.idMap[uniqueID]["deviceID"], uniqueID)
+                        print("STORE: " + str(data))
+                        DATA_CONTROLLER.addRecordInstance(data.toDict())
 
