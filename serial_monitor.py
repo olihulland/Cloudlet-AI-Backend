@@ -2,6 +2,7 @@ from serial import Serial
 from threading import Thread
 import string
 import uuid
+from serial_data import SerialData
 
 class SerialMonitor(Thread):
     def __init__(self, port: str):
@@ -82,5 +83,6 @@ class SerialMonitor(Thread):
 
                     # if the message is complete, send it to the API
                     if complete:
-                        print("API SEND: " + self.idMap[uniqueID]["message"])
+                        data = SerialData(self.idMap[uniqueID]["message"])
+                        print("API SEND: " + str(data))
 
