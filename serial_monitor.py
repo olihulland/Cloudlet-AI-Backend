@@ -48,7 +48,7 @@ class SerialMonitor(Thread):
                     hsID = self.generateID()
                     uniqueID = str(uuid.uuid4())
                     
-                    self.idMap[uniqueID] = {"hsID": hsID, "deviceID": deviceID, "recordID": recordID, "message": ""}
+                    self.idMap[uniqueID] = {"hsID": hsID, "deviceID": deviceID, "recordID": recordID, "message": "", "classification": None}
                     self.hsMap[hsID] = uniqueID
 
                     if (self.deviceMap.get(deviceID) is None):
@@ -61,6 +61,12 @@ class SerialMonitor(Thread):
                     print(f"HS ID for {deviceID} is {hsID}")
                     ser.write((message).encode())
 
+                elif line[2:].startswith("cl:"):
+                    print("CLASSIFICATION: " + line)
+                    classification = int(line[5:]) if "undef" not in line else None
+                    uniqueID = self.hsMap.get(line[:2])
+                    self.idMap[uniqueID]["classification"] = classification
+
                 elif len(line) == 0:
                     continue
 
@@ -70,7 +76,6 @@ class SerialMonitor(Thread):
                     hsID = line[:2]
                     seqNum = line[2:commaIndex]
                     message = line[commaIndex+1:].strip()
-                    classification = 0
 
                     # check if message include termination character
                     complete = False
@@ -86,7 +91,7 @@ class SerialMonitor(Thread):
 
                     # if the message is complete, send it to the API
                     if complete:
-                        data = SerialData(self.idMap[uniqueID]["message"], classification, self.idMap[uniqueID]["deviceID"], uniqueID)
+                        data = SerialData(self.idMap[uniqueID]["message"], self.idMap[uniqueID]["classification"], self.idMap[uniqueID]["deviceID"], uniqueID)
                         print("STORE: " + str(data))
                         DATA_CONTROLLER.addRecordInstance(data.toDict())
 

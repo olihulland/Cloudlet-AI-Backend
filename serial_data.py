@@ -5,7 +5,7 @@ Class responsible for parsing the message recieved in the serial monitor.
 import json
 
 class SerialData:
-    def __init__(self, message: str, classification: int, deviceID: str, uniqueID: str) -> None:
+    def __init__(self, message: str, classification: int | None, deviceID: str, uniqueID: str) -> None:
         self._data_list = self.parseMessage(message)
         self._classification = classification
         self._deviceID = deviceID
