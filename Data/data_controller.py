@@ -9,6 +9,7 @@ import API.api as api
 
 INIT_DATA = {
     "record_instances": [],
+    "microbits": [],
 }
 
 FILENAME = "Data/data.pickle"
@@ -71,8 +72,24 @@ class DataController:
         toRet = record_instance.copy()
         toRet["data"] = data
         return toRet
+    
+    def addMicrobit(self, deviceID) -> int:
+        # check if exists already
+        for microbit in self._data["microbits"]:
+            if microbit["deviceID"] == deviceID:
+                return microbit["friendlyID"]
+        
+        # add new microbit
+        newID = len(self._data["microbits"])
+        self._data["microbits"].append({
+            "deviceID": deviceID,
+            "friendlyID": newID,
+        })
+        self._saveData()
+        return newID
             
     def addRecordInstance(self, record_instance: dict) -> None:
+        self.addMicrobit(record_instance["deviceID"])
         record_instance = self.cleanRecordInstance(record_instance)
         self._data["record_instances"].append(record_instance)
         self._saveData()
