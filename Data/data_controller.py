@@ -10,6 +10,7 @@ import API.api as api
 INIT_DATA = {
     "record_instances": [],
     "microbits": [],
+    "classes": [],
 }
 
 FILENAME = "Data/data.pickle"
@@ -109,6 +110,22 @@ class DataController:
         self._saveData()
         api.broadcast_data_update()
         return True
+    
+    def setClass(self, classID: int, className: str) -> None:
+        existing = None
+        for c in self._data["classes"]:
+            if c["id"] == classID:
+                existing = c
+                break
+        if existing is not None:
+            existing["name"] = className
+            self._saveData()
+        else:
+            self._data["classes"].append({
+                "id": classID,
+                "name": className
+            })
+            self._saveData()
 
     @property
     def filename(self) -> str:

@@ -59,6 +59,13 @@ def post_model():
 
     return "OK"
 
+@app.post("/name-class/<classID>")
+def post_name_class(classID):
+    name = request.form["name"]
+    DATA_CONTROLLER.setClass(classID, name)
+    broadcast_data_update()
+    return "",204
+
 @app.get("/model-header")
 def get_model_header():
     with open("ML/ConvertToTfLite/model.h", "r") as f:
