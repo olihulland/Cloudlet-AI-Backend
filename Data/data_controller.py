@@ -50,6 +50,21 @@ class DataController:
         self._saveData()
         api.broadcast_data_update()
 
+    def deleteRecordInstance(self, recordID: str) -> bool:
+        indexOfRecord = None
+        for i, record in enumerate(self._data["record_instances"]):
+            if record["uniqueID"] == recordID:
+                indexOfRecord = i
+                break
+
+        if indexOfRecord is None:
+            return False
+        
+        del self._data["record_instances"][indexOfRecord]
+        self._saveData()
+        api.broadcast_data_update()
+        return True
+
     @property
     def filename(self) -> str:
         return self._filename

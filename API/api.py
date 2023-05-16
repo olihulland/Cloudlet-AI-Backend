@@ -30,6 +30,14 @@ def broadcast_data_update():
     message = json.dumps({"queries_updated": ["getData"]})
     socket_.emit("data_update", message)
 
+@app.delete("/data/<recordID>")
+def delete_record(recordID):
+    success = DATA_CONTROLLER.deleteRecordInstance(recordID)
+    if success:
+        return "", 204
+    else:
+        return "Record not found", 404
+
 @app.post("/model")
 def post_model():
     files = request.files
