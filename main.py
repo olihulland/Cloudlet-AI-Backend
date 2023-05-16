@@ -1,5 +1,5 @@
 from API import api
-from serial_monitor import SerialMonitor
+from Serial.serial_controller import SerialController
 from ML.ml_controller import MLController
 import sys
 import threading
@@ -18,7 +18,8 @@ if __name__ == "__main__":
     ml_controller = MLController.getInstance()
     ml_controller.start()
 
-    # Start serial monitor in a separate thread
+    # Start serial controller in a separate thread
     serial_port = sys.argv[1]
-    serial_monitor = SerialMonitor(serial_port)
-    serial_monitor.start()
+    serial_controller = SerialController.getInstance()
+    serial_controller.initialise(serial_port)
+    serial_controller.start()

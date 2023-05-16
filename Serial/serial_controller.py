@@ -2,18 +2,29 @@ from serial import Serial
 from threading import Thread
 import string
 import uuid
-from serial_data import SerialData
+from Serial.serial_data import SerialData
 from Data.data_controller import DataController
 
 DATA_CONTROLLER = DataController.getInstance()
-class SerialMonitor(Thread):
-    def __init__(self, port: str):
+
+class SerialController(Thread):
+    _instance = None
+
+    def __init__(self):
         Thread.__init__(self)
-        self.port = port
         self.idMap = {}
         self.deviceMap = {}
         self.hsMap = {}
         self.lastID = None
+
+    def initialise(self, port: str):
+        self.port = port
+
+    @classmethod
+    def getInstance(cls) -> "SerialController":
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
 
     def generateID(self):
         printable = string.ascii_letters + string.digits + string.punctuation.replace(",", "").replace(";", "")
@@ -31,6 +42,17 @@ class SerialMonitor(Thread):
 
         self.lastID = idOut
         return idOut
+    
+    def _sendIdent(self, deviceID: str, friendlyID: str):
+        message = "ID" + deviceID + "," + friendlyID + "\n"
+        print(f"Sending IDENT to {deviceID}")
+        with Serial(self.port, 115200) as ser:
+            ser.write(message.encode())
+    
+    def ident(self):
+        microbits = DATA_CONTROLLER.getMicrobits()
+        for microbit in microbits:
+            self._sendIdent(microbit["deviceID"], str(microbit["friendlyID"]))
 
     def run(self):
         print("--- RUNNING SERIAL MONITOR ---")

@@ -127,6 +127,9 @@ class DataController:
             })
             self._saveData()
 
+    def getMicrobits(self) -> list[dict]:
+        return self._data["microbits"]
+
     @property
     def filename(self) -> str:
         return self._filename

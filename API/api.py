@@ -2,6 +2,7 @@ from flask import Flask, Response, request
 from flask_cors import CORS
 from Data.data_controller import DataController
 from ML.ml_controller import MLController
+from Serial.serial_controller import SerialController
 from flask_socketio import SocketIO
 import json
 
@@ -11,6 +12,7 @@ socket_ = SocketIO(app, cors_allowed_origins="*")
 
 DATA_CONTROLLER = DataController.getInstance()
 ML_CONTROLLER = MLController.getInstance()
+SERIAL_CONTROLLER = SerialController.getInstance()
 
 def run(debug):
     print("--- RUNNING API ---")
@@ -25,6 +27,11 @@ def get_test():
 def get_data():
     data = json.dumps(DATA_CONTROLLER.data)
     return Response(data, mimetype="application/json")
+
+@app.get("/ident")
+def get_ident():
+    SERIAL_CONTROLLER.ident();
+    return "",204
 
 def broadcast_data_update():
     message = json.dumps({"queries_updated": ["getData"]})
