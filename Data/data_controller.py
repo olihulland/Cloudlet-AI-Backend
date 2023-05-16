@@ -44,8 +44,36 @@ class DataController:
     def _saveData(self) -> None:
         with open(self._filename, "wb") as f:
             pickle.dump(self._data, f)
+
+    @staticmethod
+    def cleanRecordInstance(record_instance: dict) -> dict:
+        # remove incomplete data from the record instance
+        data = record_instance["data"]
+        keys = []
+        for instance in data:
+            keys = list(instance.keys())
+            for key in keys:
+                if key not in keys:
+                    keys.append(key)
+
+
+        for instance in data:
+            missing = False
+            for key in keys:
+                if key not in instance.keys():
+                    print(f"missing key {key} in instance num {instance['n']}")
+                    missing = True
+            
+            if missing:
+                print("removing instance")
+                data.remove(instance)
+
+        toRet = record_instance.copy()
+        toRet["data"] = data
+        return toRet
             
     def addRecordInstance(self, record_instance: dict) -> None:
+        record_instance = self.cleanRecordInstance(record_instance)
         self._data["record_instances"].append(record_instance)
         self._saveData()
         api.broadcast_data_update()
