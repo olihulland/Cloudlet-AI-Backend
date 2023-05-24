@@ -1,8 +1,8 @@
-from tensorflowjs.converters import keras_tfjs_loader
+from tensorflowjs.converters import keras_tfjs_loader, save_keras_model
 import tensorflow as tf
 import os
 
-def convertModel():
+def convertModelToTFlite():
     model = keras_tfjs_loader.load_keras_model("ML/GeneratedModel/model.json")
     
     os.system("rm -rf ML/ConvertToTfLite/model")
@@ -19,3 +19,6 @@ def convertModel():
     os.system("xxd -n model_tflite -i ML/ConvertToTfLite/model_tflite > ML/ConvertToTflite/model.h")
     
     print("Model converted!")
+
+def convertModelToTFJS(model: tf.keras.Model, id: str) -> None:
+    save_keras_model(model, f"ML/ConvertToTFJS/{id}/")

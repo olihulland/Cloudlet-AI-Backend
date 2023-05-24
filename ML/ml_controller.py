@@ -1,5 +1,7 @@
 from threading import Thread
-from ML.model_converter import convertModel
+from ML.model_converter import convertModelToTFlite, convertModelToTFJS
+from ML.model_trainer import train_model
+import os
 
 class MLController(Thread):
     _instance = None
@@ -16,6 +18,19 @@ class MLController(Thread):
     
     def flagConversion(self) -> None:
         self._isConversion = True
+
+    def trainModel(self, data: dict, id: str) -> None:
+        m = train_model(data);
+        convertModelToTFJS(m, id)
+
+    def modelExists(self, id: str) -> bool:
+        return os.path.exists(f"ML/ConvertToTFJS/{id}")
+    
+    def removeModelFile(self, id: str, fileName: str) -> None:
+        os.system(f"rm -f ML/ConvertToTFJS/{id}/{fileName}")
+        # if the folder is empty, remove it
+        if len(os.listdir(f"ML/ConvertToTFJS/{id}")) == 0:
+            os.system(f"rm -rf ML/ConvertToTFJS/{id}")
     
     def run(self):
         print("--- RUNNING ML CONTROLLER ---")
@@ -23,5 +38,5 @@ class MLController(Thread):
             if self._isConversion:
                 self._isConversion = False
                 print("Converting model...")
-                convertModel()
+                convertModelToTFlite()
                 

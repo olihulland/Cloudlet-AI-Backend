@@ -5,6 +5,7 @@ from ML.ml_controller import MLController
 from Serial.serial_controller import SerialController
 from flask_socketio import SocketIO
 import json
+import uuid
 
 app = Flask(__name__)
 CORS(app)
@@ -65,6 +66,37 @@ def post_model():
     ML_CONTROLLER.flagConversion()
 
     return "OK"
+
+@app.post("/train")
+def post_train():
+    data = request.get_json()
+
+    # generate unique id
+    modelID = str(uuid.uuid4())
+    
+    try:
+        ML_CONTROLLER.trainModel(data, modelID)
+    except Exception as e:
+        print(e)
+        return str(e), 500
+
+    # wait until folder exists before returning
+    while not ML_CONTROLLER.modelExists(modelID):
+        continue
+
+    jsonResp = {"modelID": modelID}
+    return Response(json.dumps(jsonResp), mimetype="application/json")
+
+@app.get("/trained-model/<modelID>/<fileName>")
+def get_trained_model(modelID, fileName):
+    if (not ML_CONTROLLER.modelExists(modelID)):
+        return "Model not found", 404
+
+    print(f"Getting {fileName} for model {modelID}")
+    with open(f"ML/ConvertToTFJS/{modelID}/{fileName}", "rb") as f:
+        data = f.read()
+        ML_CONTROLLER.removeModelFile(modelID, fileName)
+        return Response(data, mimetype="text/plain")
 
 @app.post("/name-class/<classID>")
 def post_name_class(classID):
