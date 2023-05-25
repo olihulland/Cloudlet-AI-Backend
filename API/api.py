@@ -75,7 +75,7 @@ def post_train():
     modelID = str(uuid.uuid4())
     
     try:
-        ML_CONTROLLER.trainModel(data, modelID)
+        history = ML_CONTROLLER.trainModel(data, modelID)
     except Exception as e:
         print(e)
         return str(e), 500
@@ -84,7 +84,7 @@ def post_train():
     while not ML_CONTROLLER.modelExists(modelID):
         continue
 
-    jsonResp = {"modelID": modelID}
+    jsonResp = {"modelID": modelID, "history": history}
     return Response(json.dumps(jsonResp), mimetype="application/json")
 
 @app.get("/trained-model/<modelID>/<fileName>")

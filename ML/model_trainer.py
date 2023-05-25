@@ -25,6 +25,6 @@ def train_model(data: dict) -> tf.keras.Model:
 
     model.compile(optimizer=data["model"]["compile"]["optimizer"], loss=data["model"]["compile"]["loss"], metrics=data["model"]["compile"]["metrics"])
 
-    model.fit(features, labels, epochs=data["model"]["fit"]["epochs"], batch_size=data["model"]["fit"]["batchSize"] if data["model"]["fit"]["batchSize"] is not None else 32)
+    history = model.fit(features, labels, epochs=data["model"]["fit"]["epochs"], batch_size=data["model"]["fit"]["batchSize"] if data["model"]["fit"]["batchSize"] is not None else 32)
 
-    return model
+    return model, history.history

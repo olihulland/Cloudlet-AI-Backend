@@ -20,8 +20,9 @@ class MLController(Thread):
         self._isConversion = True
 
     def trainModel(self, data: dict, id: str) -> None:
-        m = train_model(data);
+        m, hist = train_model(data);
         convertModelToTFJS(m, id)
+        return hist
 
     def modelExists(self, id: str) -> bool:
         return os.path.exists(f"ML/ConvertToTFJS/{id}")
