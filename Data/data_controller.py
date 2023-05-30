@@ -63,7 +63,7 @@ class DataController:
             missing = False
             for key in keys:
                 if key not in instance.keys():
-                    print(f"missing key {key} in instance num {instance['n']}")
+                    print(f"missing key {key} in instance num {instance['n'] if 'n' in instance.keys() else 'unknown'}")
                     missing = True
             
             if missing:

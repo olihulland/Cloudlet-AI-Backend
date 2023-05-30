@@ -65,12 +65,12 @@ class SerialController(Thread):
                 if line.startswith("HS"):
                     commaIndex = line.index(",")
                     deviceID = line[2:commaIndex]
-                    recordID = line[commaIndex+1:]
+                    classification = line[commaIndex+1:]
                     
                     hsID = self.generateID()
                     uniqueID = str(uuid.uuid4())
                     
-                    self.idMap[uniqueID] = {"hsID": hsID, "deviceID": deviceID, "recordID": recordID, "message": "", "classification": None}
+                    self.idMap[uniqueID] = {"hsID": hsID, "deviceID": deviceID, "message": "", "classification": int(classification)}
                     self.hsMap[hsID] = uniqueID
 
                     if (self.deviceMap.get(deviceID) is None):
@@ -82,12 +82,6 @@ class SerialController(Thread):
 
                     print(f"HS ID for {deviceID} is {hsID}")
                     ser.write((message).encode())
-
-                elif line[2:].startswith("cl:"):
-                    print("CLASSIFICATION: " + line)
-                    classification = int(line[5:]) if "undef" not in line else None
-                    uniqueID = self.hsMap.get(line[:2])
-                    self.idMap[uniqueID]["classification"] = classification
 
                 elif len(line) == 0:
                     continue
