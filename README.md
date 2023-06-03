@@ -1,5 +1,5 @@
 # Cloudlet-AI-Backend
-Frontend built in python for my SCC321 Project
+Backend built in python for my SCC321 Project
 
 ## How to run
 1. Install using poetry
