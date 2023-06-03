@@ -23,7 +23,16 @@ def train_model(data: dict) -> tf.keras.Model:
             raise ValueError("Unknown layer type: " + layer["type"])
         model.add(newLayer)
 
-    model.compile(optimizer=data["model"]["compile"]["optimizer"], loss=data["model"]["compile"]["loss"], metrics=data["model"]["compile"]["metrics"])
+    optimizer = None
+    if isinstance(data["model"]["compile"]["optimizer"], str):
+        optimizer = data["model"]["compile"]["optimizer"]
+    else:
+        if data["model"]["compile"]["optimizer"]["type"] == "adam":
+            optimizer = tf.keras.optimizers.Adam(learning_rate=float(data["model"]["compile"]["optimizer"]["learningRate"]))
+        else:
+            raise ValueError("Unknown optimizer type: " + data["model"]["compile"]["optimizer"]["type"])
+
+    model.compile(optimizer, loss=data["model"]["compile"]["loss"], metrics=data["model"]["compile"]["metrics"])
 
     history = model.fit(features, labels, epochs=data["model"]["fit"]["epochs"], batch_size=data["model"]["fit"]["batchSize"] if data["model"]["fit"]["batchSize"] is not None else 32)
 
