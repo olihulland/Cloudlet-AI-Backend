@@ -16,8 +16,11 @@ class MLController(Thread):
             cls._instance = cls()
         return cls._instance
     
-    def flagConversion(self) -> None:
-        self._isConversion = True
+    # def flagConversion(self) -> None:
+    #     self._isConversion = True
+
+    def doConversion(self) -> None:
+        convertModelToTFlite()
 
     def trainModel(self, data: dict, id: str) -> None:
         m, hist = train_model(data);
@@ -35,9 +38,9 @@ class MLController(Thread):
     
     def run(self):
         print("--- RUNNING ML CONTROLLER ---")
-        while True:
-            if self._isConversion:
-                self._isConversion = False
-                print("Converting model...")
-                convertModelToTFlite()
+        # while True:
+        #     if self._isConversion:
+        #         self._isConversion = False
+        #         print("Converting model...")
+        #         convertModelToTFlite()
                 

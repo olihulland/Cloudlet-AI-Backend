@@ -63,9 +63,12 @@ def post_model():
     modelFile.save("ML/GeneratedModel/model.json")
     weightsFile.save("ML/GeneratedModel/model.weights.bin")
 
-    ML_CONTROLLER.flagConversion()
+    # ML_CONTROLLER.flagConversion()
+    ML_CONTROLLER.doConversion()
 
-    return "OK"
+    with open("ML/ConvertToTfLite/model.h", "r") as f:
+        data = f.read()
+        return Response(data, mimetype="text/plain")
 
 @app.post("/train")
 def post_train():
