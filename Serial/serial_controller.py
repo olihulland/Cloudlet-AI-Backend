@@ -1,4 +1,5 @@
 from serial import Serial
+import serial.tools.list_ports as list_ports
 from threading import Thread
 import string
 import uuid
@@ -57,57 +58,71 @@ class SerialController(Thread):
     def run(self):
         print("--- RUNNING SERIAL MONITOR ---")
 
-        with Serial(self.port, 115200) as ser:
-            while True:
-                line = ser.readline().decode().strip()
+        while True:
+            portExists = False
 
-                # handshake to establish an id for transmission
-                if line.startswith("HS"):
-                    commaIndex = line.index(",")
-                    deviceID = line[2:commaIndex]
-                    classification = line[commaIndex+1:]
-                    
-                    hsID = self.generateID()
-                    uniqueID = str(uuid.uuid4())
-                    
-                    self.idMap[uniqueID] = {"hsID": hsID, "deviceID": deviceID, "message": "", "classification": int(classification)}
-                    self.hsMap[hsID] = uniqueID
+            serialPorts = list_ports.comports()
+            for serialPort in serialPorts:
+                if serialPort.device.split(".")[-1] == self.port.split(".")[-1]:
+                    portExists = True
+                    break
 
-                    if (self.deviceMap.get(deviceID) is None):
-                        self.deviceMap[deviceID] = [uniqueID]
-                    else:
-                        self.deviceMap[deviceID].append(uniqueID)
+            if portExists:
+                try:
+                    with Serial(self.port, 115200) as ser:
+                        print("Connected to Cloudlet Hub")
+                        while True:
+                            line = ser.readline().decode().strip()
 
-                    message = "HS" + deviceID + "," + hsID + "\n"
+                            # handshake to establish an id for transmission
+                            if line.startswith("HS"):
+                                commaIndex = line.index(",")
+                                deviceID = line[2:commaIndex]
+                                classification = line[commaIndex+1:]
+                                
+                                hsID = self.generateID()
+                                uniqueID = str(uuid.uuid4())
+                                
+                                self.idMap[uniqueID] = {"hsID": hsID, "deviceID": deviceID, "message": "", "classification": int(classification)}
+                                self.hsMap[hsID] = uniqueID
 
-                    print(f"HS ID for {deviceID} is {hsID}")
-                    ser.write((message).encode())
+                                if (self.deviceMap.get(deviceID) is None):
+                                    self.deviceMap[deviceID] = [uniqueID]
+                                else:
+                                    self.deviceMap[deviceID].append(uniqueID)
 
-                elif len(line) == 0:
-                    continue
+                                message = "HS" + deviceID + "," + hsID + "\n"
 
-                else:
-                    # parse the message
-                    commaIndex = line.index(",")
-                    hsID = line[:2]
-                    seqNum = line[2:commaIndex]
-                    message = line[commaIndex+1:].strip()
+                                print(f"HS ID for {deviceID} is {hsID}")
+                                ser.write((message).encode())
 
-                    # check if message include termination character
-                    complete = False
-                    if message.endswith(";"):
-                        complete = True
-                        message = message[:-1]
-                    
-                    # get the unique id
-                    uniqueID = self.hsMap.get(hsID)
+                            elif len(line) == 0:
+                                continue
 
-                    # append the message
-                    self.idMap[uniqueID]["message"] += message
+                            else:
+                                # parse the message
+                                commaIndex = line.index(",")
+                                hsID = line[:2]
+                                seqNum = line[2:commaIndex]
+                                message = line[commaIndex+1:].strip()
 
-                    # if the message is complete, send it to the API
-                    if complete:
-                        data = SerialData(self.idMap[uniqueID]["message"], self.idMap[uniqueID]["classification"], self.idMap[uniqueID]["deviceID"], uniqueID)
-                        print("STORE: " + str(data))
-                        DATA_CONTROLLER.addRecordInstance(data.toDict())
+                                # check if message include termination character
+                                complete = False
+                                if message.endswith(";"):
+                                    complete = True
+                                    message = message[:-1]
+                                
+                                # get the unique id
+                                uniqueID = self.hsMap.get(hsID)
+
+                                # append the message
+                                self.idMap[uniqueID]["message"] += message
+
+                                # if the message is complete, send it to the API
+                                if complete:
+                                    data = SerialData(self.idMap[uniqueID]["message"], self.idMap[uniqueID]["classification"], self.idMap[uniqueID]["deviceID"], uniqueID)
+                                    print("STORE: " + str(data))
+                                    DATA_CONTROLLER.addRecordInstance(data.toDict())
+                except OSError:
+                    print("Cloudlet Hub Disconnected")
 
