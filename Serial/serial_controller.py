@@ -122,7 +122,7 @@ class SerialController(Thread):
                                 # if the message is complete, send it to the API
                                 if complete:
                                     data = SerialData(self.idMap[uniqueID]["message"], self.idMap[uniqueID]["classification"], self.idMap[uniqueID]["deviceID"], uniqueID)
-                                    print("STORE: " + str(data))
+                                    print(f"STORE data from {self.idMap[uniqueID]['hsID']} with ID {uniqueID}")
                                     DATA_CONTROLLER.addRecordInstance(data.toDict())
                             
                             sleep(0.005)
