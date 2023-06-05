@@ -5,6 +5,7 @@ import string
 import uuid
 from Serial.serial_data import SerialData
 from Data.data_controller import DataController
+from time import sleep
 
 DATA_CONTROLLER = DataController.getInstance()
 
@@ -123,6 +124,9 @@ class SerialController(Thread):
                                     data = SerialData(self.idMap[uniqueID]["message"], self.idMap[uniqueID]["classification"], self.idMap[uniqueID]["deviceID"], uniqueID)
                                     print("STORE: " + str(data))
                                     DATA_CONTROLLER.addRecordInstance(data.toDict())
+                            
+                            sleep(0.005)
                 except OSError:
                     print("Cloudlet Hub Disconnected")
 
+            sleep(0.005)
