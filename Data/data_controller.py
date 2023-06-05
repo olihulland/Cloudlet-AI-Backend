@@ -6,6 +6,7 @@ At the moment I'm just doing this in a flat file with pickle.
 
 import pickle
 import API.api as api
+from datetime import datetime
 
 INIT_DATA = {
     "record_instances": [],
@@ -92,6 +93,7 @@ class DataController:
     def addRecordInstance(self, record_instance: dict) -> None:
         self.addMicrobit(record_instance["deviceID"])
         record_instance = self.cleanRecordInstance(record_instance)
+        record_instance["utc"] = datetime.utcnow().isoformat()
         self._data["record_instances"].append(record_instance)
         self._saveData()
         api.broadcast_data_update()
