@@ -100,15 +100,32 @@ class DataController:
 
     def deleteRecordInstance(self, recordID: str) -> bool:
         indexOfRecord = None
+        classOfRecord = None
         for i, record in enumerate(self._data["record_instances"]):
             if record["uniqueID"] == recordID:
                 indexOfRecord = i
+                classOfRecord = record["classification"]
                 break
 
         if indexOfRecord is None:
             return False
         
         del self._data["record_instances"][indexOfRecord]
+
+        # remove class if no longer used
+        classUsed = False
+        for record in self._data["record_instances"]:
+            if record["classification"] == classOfRecord:
+                classUsed = True
+                break
+        print(f"class Used: {classUsed}")
+        if not classUsed:
+            for i, c in enumerate(self._data["classes"]):
+                if c["id"] == str(classOfRecord):
+                    print(f"removing class {c['name']}")
+                    del self._data["classes"][i]
+                    break
+
         self._saveData()
         api.broadcast_data_update()
         return True
