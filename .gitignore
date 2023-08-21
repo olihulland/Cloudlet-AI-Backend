@@ -165,3 +165,5 @@ ML/ConvertToTfLite/*
 ML/GeneratedModel/*
 
 .DS_Store
+
+*.old
