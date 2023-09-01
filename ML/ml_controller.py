@@ -15,9 +15,6 @@ class MLController(Thread):
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
-    
-    # def flagConversion(self) -> None:
-    #     self._isConversion = True
 
     def doConversion(self) -> None:
         convertModelToTFlite()
@@ -38,9 +35,3 @@ class MLController(Thread):
     
     def run(self):
         print("--- RUNNING ML CONTROLLER ---")
-        # while True:
-        #     if self._isConversion:
-        #         self._isConversion = False
-        #         print("Converting model...")
-        #         convertModelToTFlite()
-                
