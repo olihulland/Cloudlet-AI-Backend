@@ -6,6 +6,7 @@ from Serial.serial_controller import SerialController
 from flask_socketio import SocketIO
 import json
 import uuid
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -60,10 +61,13 @@ def post_model():
     modelFile = files["model.json"]
     weightsFile = files["model.weights.bin"]
 
+    # if GeneratedModel folder doesn't exist, create it
+    if not os.path.exists("ML/GeneratedModel"):
+        os.makedirs("ML/GeneratedModel")
+
     modelFile.save("ML/GeneratedModel/model.json")
     weightsFile.save("ML/GeneratedModel/model.weights.bin")
 
-    # ML_CONTROLLER.flagConversion()
     ML_CONTROLLER.doConversion()
 
     with open("ML/ConvertToTfLite/model.h", "r") as f:
